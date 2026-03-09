@@ -29,4 +29,13 @@ impl App {
 
         block.render(area, buf);
     }
+
+    pub fn render_help_mode(&mut self, area: Rect, buf: &mut Buffer) {
+        let title = Line::from(" Help Mode ");
+        let block = Block::bordered()
+            .title(title)
+            .border_type(BorderType::Rounded);
+
+        block.render(area, buf);
+    }
 }

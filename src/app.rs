@@ -107,7 +107,7 @@ impl Widget for &mut App {
             Mode::List => self.render_list_mode(area, buf),
             Mode::View => self.render_view_mode(area, buf),
             Mode::Edit => self.render_edit_mode(area, buf),
-            Mode::Help => todo!(),//self.render_edit_mode(area, buf),
+            Mode::Help => self.render_help_mode(area, buf),//self.render_edit_mode(area, buf),
         }
     }
 }
