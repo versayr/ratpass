@@ -13,6 +13,7 @@ enum Mode {
     View,
     Edit,
     Help, 
+    Shortcuts,
 }
 
 impl App {
@@ -48,6 +49,7 @@ impl App {
             Mode::View => self.handle_view_inputs(event),
             Mode::Edit => self.handle_edit_inputs(event),
             Mode::Help => self.handle_help_inputs(event), 
+            Mode::Shortcuts => self.handle_shortcut_inputs(event), 
         }
     }
 
@@ -56,6 +58,7 @@ impl App {
             KeyCode::Esc | KeyCode::Char('q') => self.exit = true,
             KeyCode::Char('h') | KeyCode::Char('?') => self.mode = Mode::Help,
             KeyCode::Char('e') => self.mode = Mode::Edit,
+            KeyCode::Char('\\') => self.mode = Mode::Shortcuts,
             KeyCode::Enter => self.mode = Mode::View,
             _ => {}
         }
@@ -87,6 +90,14 @@ impl App {
             _ => {}
         }
     }
+
+    fn handle_shortcut_inputs(&mut self, event: KeyEvent) {
+        match event.code {
+            KeyCode::Char('q') => self.exit = true,
+            KeyCode::Esc => self.mode = Mode::List,
+            _ => {}
+        }
+    }
 }
 
 impl Default for App {
@@ -107,7 +118,8 @@ impl Widget for &mut App {
             Mode::List => self.render_list_mode(area, buf),
             Mode::View => self.render_view_mode(area, buf),
             Mode::Edit => self.render_edit_mode(area, buf),
-            Mode::Help => self.render_help_mode(area, buf),//self.render_edit_mode(area, buf),
+            Mode::Help => self.render_help_mode(area, buf),
+            Mode::Shortcuts => self.render_shortcut_mode(area, buf),
         }
     }
 }

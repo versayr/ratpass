@@ -47,4 +47,13 @@ impl App {
 
         block.render(area, buf);
     }
+
+    pub fn render_shortcut_mode(&mut self, area: Rect, buf: &mut Buffer) {
+        let title = Line::from(" Shortcut Mode ");
+        let block = Block::bordered()
+            .title(title)
+            .border_type(BorderType::Rounded);
+
+        block.render(area, buf);
+    }
 }
