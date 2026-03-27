@@ -1,8 +1,10 @@
+use std::vec;
+
 use ratatui::{
     buffer::Buffer,
-    layout::Rect,
+    layout::{Constraint, Direction, Layout, Rect},
     text::Line,
-    widgets::{Block, BorderType, List, ListItem, Padding, Widget},
+    widgets::{Block, BorderType, HighlightSpacing, List, ListItem, Padding, Paragraph, Widget},
 };
 
 use crate::App;
@@ -36,7 +38,68 @@ impl App {
             .title(title)
             .border_type(BorderType::Rounded);
 
+        let main_layout = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints(vec![Constraint::Length(4), Constraint::Fill(1)])
+            .split(Block::inner(&block, area));
+
+        let body_layout = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints(vec![
+                Constraint::Percentage(30),
+                Constraint::Percentage(45),
+                Constraint::Percentage(25),
+            ])
+            .split(main_layout[1]);
+
+        let header_block = Block::bordered().border_type(BorderType::Double);
+
+        let header = Paragraph::new(vec![
+            Line::from("SERVICE NAME"),
+            Line::from("service url (optional)"),
+        ])
+        .block(header_block);
+
+        let account_block = Block::bordered().border_type(BorderType::Double);
+
+        let account_list = List::new(vec![
+            ListItem::from("Account 1"),
+            ListItem::from("Account 2"),
+        ])
+        .highlight_symbol(">>")
+        .highlight_spacing(HighlightSpacing::WhenSelected)
+        .block(account_block);
+
+        let details_block = Block::bordered().border_type(BorderType::Double);
+
+        let detail_items = vec![
+            Line::from("username"),
+            Line::from("email"),
+            Line::from("password"),
+            Line::from("access token"),
+            Line::from("security questions"),
+            Line::from("last change"),
+            Line::from("account creation date"),
+            Line::from("pin"),
+            Line::from("passcode"),
+            Line::from("shortcut"),
+        ];
+
+        let details = Paragraph::new(detail_items).block(details_block);
+
+        let shortcuts_block = Block::bordered().border_type(BorderType::Double);
+
+        let shortcuts = Paragraph::new(vec![
+            Line::raw("password | xk"),
+            Line::raw("access token | xl"),
+        ])
+        .block(shortcuts_block);
+
         block.render(area, buf);
+        header.render(main_layout[0], buf);
+        account_list.render(body_layout[0], buf);
+        details.render(body_layout[1], buf);
+        shortcuts.render(body_layout[2], buf);
     }
 
     pub fn render_help_mode(&mut self, area: Rect, buf: &mut Buffer) {
