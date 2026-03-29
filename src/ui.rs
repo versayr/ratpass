@@ -3,7 +3,7 @@ use std::vec;
 use ratatui::{
     buffer::Buffer,
     layout::{Constraint, Direction, Layout, Rect},
-    text::Line,
+    text::{Line, Span},
     widgets::{Block, BorderType, HighlightSpacing, List, ListItem, Padding, Paragraph, Widget},
 };
 
@@ -45,11 +45,7 @@ impl App {
 
         let body_layout = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints(vec![
-                Constraint::Percentage(30),
-                Constraint::Percentage(45),
-                Constraint::Percentage(25),
-            ])
+            .constraints(vec![Constraint::Percentage(30), Constraint::Percentage(70)])
             .split(main_layout[1]);
 
         let header_block = Block::bordered().border_type(BorderType::Double);
@@ -73,33 +69,60 @@ impl App {
         let details_block = Block::bordered().border_type(BorderType::Double);
 
         let detail_items = vec![
-            Line::from("username"),
-            Line::from("email"),
-            Line::from("password"),
-            Line::from("access token"),
-            Line::from("security questions"),
-            Line::from("last change"),
-            Line::from("account creation date"),
-            Line::from("pin"),
-            Line::from("passcode"),
-            Line::from("shortcut"),
+            Line::from("[ [ ACCOUNT DETAILS ] ]"),
+            Line::from(vec![
+                Span::raw(format!("{:.<width$}", "Username", width = 30)),
+                Span::raw("NAME"),
+            ]),
+            Line::from(vec![
+                Span::raw(format!("{:.<width$}", "Email", width = 30)),
+                Span::raw("EMAIL"),
+            ]),
+            Line::from(vec![
+                Span::raw(format!("{:.<width$}", "Password", width = 30)),
+                Span::raw("{*}"),
+            ]),
+            Line::from(vec![
+                Span::raw(format!("{:.<width$}", "Access Token", width = 30)),
+                Span::raw("{*}"),
+            ]),
+            Line::from(vec![
+                Span::raw(format!("{:.<width$}", "Security Questions", width = 30)),
+                Span::raw("{*}"),
+            ]),
+            Line::from(vec![
+                Span::raw(format!("{:.<width$}", "PIN", width = 30)),
+                Span::raw("{*}"),
+            ]),
+            Line::from(vec![
+                Span::raw(format!("{:.<width$}", "Passcode", width = 30)),
+                Span::raw("{*}"),
+            ]),
+            Line::from(vec![
+                Span::raw(format!("{:.<width$}", "Account Created", width = 30)),
+                Span::raw("DATE"),
+            ]),
+            Line::from(vec![
+                Span::raw(format!("{:.<width$}", "Last Change", width = 30)),
+                Span::raw("DATE"),
+            ]),
+            Line::from("[ [ SHORTCUTS ] ]"),
+            Line::from(vec![
+                Span::raw(format!("{:width$}", "Password", width = 30)),
+                Span::raw("xk"),
+            ]),
+            Line::from(vec![
+                Span::raw(format!("{:width$}", "Access Token", width = 30)),
+                Span::raw("xl"),
+            ]),
         ];
 
         let details = Paragraph::new(detail_items).block(details_block);
-
-        let shortcuts_block = Block::bordered().border_type(BorderType::Double);
-
-        let shortcuts = Paragraph::new(vec![
-            Line::raw("password | xk"),
-            Line::raw("access token | xl"),
-        ])
-        .block(shortcuts_block);
 
         block.render(area, buf);
         header.render(main_layout[0], buf);
         account_list.render(body_layout[0], buf);
         details.render(body_layout[1], buf);
-        shortcuts.render(body_layout[2], buf);
     }
 
     pub fn render_help_mode(&mut self, area: Rect, buf: &mut Buffer) {
