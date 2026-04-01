@@ -1,11 +1,12 @@
 use std::io;
-
+use rusqlite::Connection;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{buffer::Buffer, layout::Rect, widgets::Widget, DefaultTerminal, Frame};
 
 pub struct App {
     exit: bool,
     mode: Mode,
+    conn: &Connection,
 }
 
 enum Mode {
@@ -101,10 +102,11 @@ impl App {
 }
 
 impl Default for App {
-    fn default() -> Self {
+    fn default(conn: &Connection) -> Self {
         Self {
             exit: false,
             mode: Mode::List,
+            conn: &Connection,
         }
     }
 }
