@@ -23,7 +23,7 @@ pub fn init_databse() -> Result<Connection, Error> {
             last_change TEXT, 
             account_creation_date TEXT, 
             pin INTEGER,
-            passcode TEXT,
+            passcode TEXT
         )", 
         [],
     ).expect("Failed to create accounts table.");
