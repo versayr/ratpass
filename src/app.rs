@@ -3,10 +3,12 @@ use rusqlite::Connection;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{buffer::Buffer, layout::Rect, widgets::Widget, DefaultTerminal, Frame};
 
+use crate::db::init_databse;
+
 pub struct App {
     exit: bool,
     mode: Mode,
-    conn: &Connection,
+    conn: Connection,
 }
 
 enum Mode {
@@ -102,11 +104,11 @@ impl App {
 }
 
 impl Default for App {
-    fn default(conn: &Connection) -> Self {
+    fn default() -> Self {
         Self {
             exit: false,
             mode: Mode::List,
-            conn: &Connection,
+            conn: init_databse().expect("Failed to get db connection."),
         }
     }
 }
