@@ -1,3 +1,4 @@
+use crate::models::*;
 use rusqlite::{Connection, Error};
 
 pub fn init_databse() -> Result<Connection, Error> {
@@ -8,9 +9,10 @@ pub fn init_databse() -> Result<Connection, Error> {
             id INTEGER PRIMARY KEY,
             service TEXT,
             url TEXT
-        )", 
+        )",
         [],
-    ).expect("Failed to create service table.");
+    )
+    .expect("Failed to create service table.");
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS accounts (
@@ -24,9 +26,10 @@ pub fn init_databse() -> Result<Connection, Error> {
             account_creation_date TEXT, 
             pin INTEGER,
             passcode TEXT
-        )", 
+        )",
         [],
-    ).expect("Failed to create accounts table.");
+    )
+    .expect("Failed to create accounts table.");
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS security_questions (
@@ -34,9 +37,10 @@ pub fn init_databse() -> Result<Connection, Error> {
             account_id INTEGER,
             question TEXT,
             answer TEXT
-        )", 
+        )",
         [],
-    ).expect("Failed to create security question table.");
+    )
+    .expect("Failed to create security question table.");
 
     conn.execute(
         "CREATE TABLE IF NOT EXISTS shortcuts (
@@ -44,9 +48,32 @@ pub fn init_databse() -> Result<Connection, Error> {
             account_id INTEGER,
             field TEXT,
             sequence TEXT
-        )", 
+        )",
         [],
-    ).expect("Failed to create security question table.");
+    )
+    .expect("Failed to create security question table.");
 
     Ok(conn)
+}
+
+pub fn get_services(conn: &Connection) -> Result<Vec<Service>, Error> {
+    let mut stmt = conn
+        .prepare("SELECT id, service, url FROM services ORDER BY service")
+        .expect("Failed to prepare statement");
+
+    let result = stmt.query_map([], |row| {
+        Ok(Service {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            url: row.get(2)?,
+        })
+    })?;
+
+    let mut services: Vec<Service> = vec![];
+
+    for service in result.into_iter() {
+        services.push(service?);
+    }
+
+    Ok(services)
 }
