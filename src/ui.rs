@@ -7,7 +7,7 @@ use ratatui::{
     widgets::{Block, BorderType, HighlightSpacing, List, ListItem, Padding, Paragraph, Widget},
 };
 
-use crate::App;
+use crate::{db::get_services, App};
 
 impl App {
     pub fn render_list_mode(&mut self, area: Rect, buf: &mut Buffer) {
@@ -17,7 +17,14 @@ impl App {
             .padding(Padding::uniform(1))
             .border_type(BorderType::Rounded);
 
-        let list = List::new([ListItem::new(Line::from("Name of a Service"))]);
+        let services = get_services(&self.conn).expect("Failed to get services.");
+
+        let list_items: Vec<ListItem> = services
+            .into_iter()
+            .map(|service| ListItem::new(Line::from(service.name)))
+            .collect();
+
+        let list = List::new(list_items);
 
         list.render(Block::inner(&block, area), buf);
         block.render(area, buf);

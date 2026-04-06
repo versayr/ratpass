@@ -8,7 +8,7 @@ use crate::db::init_databse;
 pub struct App {
     exit: bool,
     mode: Mode,
-    conn: Connection,
+    pub conn: Connection,
 }
 
 enum Mode {
