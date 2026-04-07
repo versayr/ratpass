@@ -3,12 +3,14 @@ use rusqlite::Connection;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{buffer::Buffer, layout::Rect, widgets::Widget, DefaultTerminal, Frame};
 
-use crate::db::init_databse;
+use crate::{db::init_databse, models::{Account, Service}};
 
 pub struct App {
     exit: bool,
     mode: Mode,
     pub conn: Connection,
+    selected_service: Option<Service>,
+    selected_account: Option<Account>
 }
 
 enum Mode {
@@ -36,7 +38,7 @@ impl App {
     }
 
     fn handle_events(&mut self) -> io::Result<()> {
-        match event::read()? {
+        match event::read().expect("Failed to parse input.") {
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
                 self.handle_key_events(key_event);
             },
@@ -61,6 +63,7 @@ impl App {
             KeyCode::Esc | KeyCode::Char('q') => self.exit = true,
             KeyCode::Char('h') | KeyCode::Char('?') => self.mode = Mode::Help,
             KeyCode::Char('e') => self.mode = Mode::Edit,
+            KeyCode::Char('n') => self.new_service(),
             KeyCode::Char('\\') => self.mode = Mode::Shortcuts,
             KeyCode::Enter => self.mode = Mode::View,
             _ => {}
@@ -73,6 +76,7 @@ impl App {
             KeyCode::Char('h') | KeyCode::Char('?') => self.mode = Mode::Help,
             KeyCode::Esc => self.mode = Mode::List,
             KeyCode::Char('e') => self.mode = Mode::Edit,
+            KeyCode::Char('n') => self.new_account(),
             _ => {}
         }
     }
@@ -101,6 +105,18 @@ impl App {
             _ => {}
         }
     }
+
+    fn new_service(&mut self) {
+        let new_service = Service::default();
+        self.selected_service = Some(new_service);
+        self.mode = Mode::Edit;
+    }
+
+    fn new_account(&mut self) {
+        let new_account = Account::default();
+        self.selected_account = Some(new_account);
+        self.mode = Mode::Edit;
+    }
 }
 
 impl Default for App {
@@ -109,6 +125,8 @@ impl Default for App {
             exit: false,
             mode: Mode::List,
             conn: init_databse().expect("Failed to get db connection."),
+            selected_service: None,
+            selected_account: None,
         }
     }
 }

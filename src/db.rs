@@ -7,7 +7,7 @@ pub fn init_databse() -> Result<Connection, Error> {
     conn.execute(
         "CREATE TABLE IF NOT EXISTS services (
             id INTEGER PRIMARY KEY,
-            service TEXT,
+            service TEXT NOT NULL,
             url TEXT
         )",
         [],
@@ -17,13 +17,13 @@ pub fn init_databse() -> Result<Connection, Error> {
     conn.execute(
         "CREATE TABLE IF NOT EXISTS accounts (
             id INTEGER PRIMARY KEY,
-            service_id INTEGER,
+            service_id INTEGER NOT NULL,
             username TEXT,
             email TEXT,
             password TEXT, 
             access_token TEXT, 
-            last_change TEXT, 
-            account_creation_date TEXT, 
+            last_change TEXT NOT NULL, 
+            account_creation_date TEXT NOT NULL, 
             pin INTEGER,
             passcode TEXT
         )",
@@ -34,9 +34,9 @@ pub fn init_databse() -> Result<Connection, Error> {
     conn.execute(
         "CREATE TABLE IF NOT EXISTS security_questions (
             id INTEGER PRIMARY KEY,
-            account_id INTEGER,
-            question TEXT,
-            answer TEXT
+            account_id INTEGER NOT NULL,
+            question TEXT NOT NULL,
+            answer TEXT NOT NULL
         )",
         [],
     )
@@ -45,9 +45,9 @@ pub fn init_databse() -> Result<Connection, Error> {
     conn.execute(
         "CREATE TABLE IF NOT EXISTS shortcuts (
             id INTEGER PRIMARY KEY,
-            account_id INTEGER,
-            field TEXT,
-            sequence TEXT
+            account_id INTEGER NOT NULL,
+            field TEXT NOT NULL,
+            sequence TEXT NOT NULL
         )",
         [],
     )
@@ -63,9 +63,9 @@ pub fn get_services(conn: &Connection) -> Result<Vec<Service>, Error> {
 
     let result = stmt.query_map([], |row| {
         Ok(Service {
-            id: row.get(0)?,
-            name: row.get(1)?,
-            url: row.get(2)?,
+            id: row.get(0).expect("Failed to get service id."),
+            name: row.get(1).expect("Failed to get service name."),
+            url: row.get(2).expect("Failed to get service url."),
         })
     })?;
 
